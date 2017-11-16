@@ -1,0 +1,5 @@
+.flag {
+    width: calc(1.5em - 2px);
+    height: calc((1.5em * 0.75) - 2px);
+    margin: 1px;
+}

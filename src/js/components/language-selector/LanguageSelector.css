@@ -1,0 +1,27 @@
+.flagSelector {
+    border: 1px black solid;
+    border-bottom: none;
+    display: grid;
+    grid-template-columns: 1.5em auto auto;
+    grid-column-gap: 0.25em;
+    align-items: center;
+    padding: 0.5em 0.25em;
+}
+
+.flagSelector:last-child {
+    border-bottom: 1px black solid;
+}
+
+.flags {
+    vertical-align: middle;
+}
+
+.welcomeText {
+    font-size: 1.25em;
+}
+
+.languageName {
+    text-align: right;
+    font-size: 1em;
+    text-decoration: underline;
+}
