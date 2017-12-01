@@ -1,4 +1,6 @@
+import delay from 'delay';
 import React from 'react';
+
 import { Callback } from '../../utils/jsx-props';
 import { Procedure, ProcedureStepAdvice, ProcedureStepQuestion, StepKind } from './procedure';
 
@@ -12,13 +14,13 @@ type QuestionPageProps = { question: ProcedureStepQuestion } & Callback<'onAnswe
 function QuestionPage({ question, onAnswer }: QuestionPageProps) {
     return <div>
         <div className={styles.question}>{question.question}</div>
-        {
+        <div className={styles.answerBox}>{
             question.answers.map(answer =>
                 <div key={answer.link} className={styles.answer}
                      onClick={() => onAnswer(answer.link)}>
                     {answer.answer}
                 </div>)
-        }
+        }</div>
     </div>;
 }
 
@@ -44,7 +46,8 @@ export class RunProcedure extends React.Component<RunProcedureProps, RunProcedur
         };
     }
 
-    nextStep(id: number) {
+    async nextStep(id: number) {
+        await delay(350);
         this.setState((): RunProcedureState => ({ currentStepId: id }));
     }
 

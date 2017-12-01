@@ -1,0 +1,50 @@
+.question {
+    padding: 0.5em;
+    font-size: 2em;
+}
+
+.answerBox {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.answer {
+    border: #000066 solid 2px;
+    background-color: #a79dc1;
+    margin: 0.5em;
+    min-width: 25%;
+    padding: 0.25em 0.8em;
+    text-align: center;
+    font-size: 1.4em;
+
+    border-radius: 0.5em;
+
+    position: relative;
+    transition-duration: 0.4s;
+    overflow: hidden;
+}
+
+.answer:before {
+    content: "";
+    background: #90EE90;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -25%;
+    padding-top: calc(0.25em * 2 + 1em);
+    padding-left: 150%;
+
+    border-radius: 0.5em;
+
+    opacity: 0;
+    transition: all 0.8s;
+}
+
+.answer:active:before{
+    padding-left: 0;
+    left: 50%;
+    opacity: 1;
+    transition: 0s;
+}

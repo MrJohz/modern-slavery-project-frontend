@@ -1,5 +1,3 @@
-import delay from 'delay';
-
 export const enum StepKind {
     QUESTION = 'step',
     ADVICE = 'advice',
@@ -23,7 +21,6 @@ export interface Procedure {
 }
 
 export async function fetchProcedure(languageId: number): Promise<Procedure> {
-    await delay(1000); // TODO: remove me!
     return {
         start: 0,
 
