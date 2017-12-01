@@ -6,11 +6,6 @@ scripts:
       "nps build.bundle.watch"
     '
 
-    # not currently used
-    compile:
-      default: 'tsc'
-      watch: 'tsc --watch'
-
     bundle:
       default: 'webpack --config webpack.config.js'
       watch: 'webpack --config webpack.config.js --watch'

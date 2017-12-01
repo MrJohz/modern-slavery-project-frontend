@@ -14,7 +14,7 @@ module.exports = {
     },
 
     output: {
-        filename: 'public/[name].js',
+        filename: 'public/[name].[chunkhash].js',
         path: path.resolve(__dirname, 'dist')
     },
 
@@ -41,11 +41,13 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('styles.css'),
-        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' }),
-        new webpack.optimize.CommonsChunkPlugin({ name: 'manifest', minChunks: Infinity }),
         new HtmlWebpackPlugin({
             template: './src/index.html',
             inject: true,
         }),
+        new webpack.HashedModuleIdsPlugin(),
+        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' }),
+        new webpack.optimize.CommonsChunkPlugin({ name: 'manifest', minChunks: Infinity }),
     ]
-};
+}
+;
