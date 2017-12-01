@@ -1,4 +1,5 @@
 import React from 'react';
+import { Callback } from '../../utils/jsx-props';
 import { Procedure, ProcedureStepAdvice, ProcedureStepQuestion, StepKind } from './procedure';
 
 import styles from './RunProcedure.css';
@@ -6,10 +7,19 @@ import styles from './RunProcedure.css';
 type RunProcedureProps = { language: number, procedure: Procedure };
 type RunProcedureState = { currentStepId: number };
 
-type QuestionPageProps = { question: ProcedureStepQuestion }
+type QuestionPageProps = { question: ProcedureStepQuestion } & Callback<'onAnswer', number>;
 
-function QuestionPage({ question }: QuestionPageProps) {
-    return <div>Hello! {question.question} - {question.answers.map(answer => answer.answer + '->' + answer.link)}</div>;
+function QuestionPage({ question, onAnswer }: QuestionPageProps) {
+    return <div>
+        <div className={styles.question}>{question.question}</div>
+        {
+            question.answers.map(answer =>
+                <div key={answer.link} className={styles.answer}
+                     onClick={() => onAnswer(answer.link)}>
+                    {answer.answer}
+                </div>)
+        }
+    </div>;
 }
 
 type AdvicePageProps = { advice: ProcedureStepAdvice }
@@ -34,11 +44,15 @@ export class RunProcedure extends React.Component<RunProcedureProps, RunProcedur
         };
     }
 
+    nextStep(id: number) {
+        this.setState((): RunProcedureState => ({ currentStepId: id }));
+    }
+
     render() {
         const currentStep = this.procedure[this.state.currentStepId];
         switch (currentStep.kind) {
             case StepKind.QUESTION:
-                return <QuestionPage question={currentStep}/>;
+                return <QuestionPage question={currentStep} onAnswer={id => this.nextStep(id)}/>;
             case StepKind.ADVICE:
                 return <AdvicePage advice={currentStep}/>;
         }

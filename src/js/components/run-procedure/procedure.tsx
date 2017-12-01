@@ -19,7 +19,6 @@ export interface ProcedureStepAdvice {
 
 export interface Procedure {
     start: number;
-
     [key: number]: ProcedureStepQuestion | ProcedureStepAdvice;
 }
 
