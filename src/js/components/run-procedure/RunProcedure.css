@@ -22,7 +22,6 @@
     border-radius: 0.5em;
 
     position: relative;
-    transition-duration: 0.4s;
     overflow: hidden;
 }
 
@@ -32,19 +31,16 @@
     display: block;
     position: absolute;
     top: 0;
-    left: -25%;
+    left: 0;
     padding-top: calc(0.25em * 2 + 1em);
     padding-left: 150%;
 
-    border-radius: 0.5em;
-
     opacity: 0;
-    transition: all 0.8s;
+    transition: all 0.5s ease-out;
 }
 
 .answer:active:before{
     padding-left: 0;
-    left: 50%;
     opacity: 1;
     transition: 0s;
 }

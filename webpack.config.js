@@ -1,16 +1,21 @@
 const path = require('path');
+const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const combineLoaders = require('webpack-combine-loaders');
 
 module.exports = {
-    entry: './src/js/index.tsx',
+    entry: {
+        app: './src/js/index.tsx',
+        vendor: Object.keys(require('./package').dependencies).filter(dep => dep !== 'flag-icon-css'),
+    },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.css']
     },
 
     output: {
-        filename: 'bundle.umd.js',
-        path: path.resolve(__dirname, 'dist', 'public')
+        filename: 'public/[name].js',
+        path: path.resolve(__dirname, 'dist')
     },
 
     devtool: 'source-map',
@@ -35,6 +40,12 @@ module.exports = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin('styles.css')
+        new ExtractTextPlugin('styles.css'),
+        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' }),
+        new webpack.optimize.CommonsChunkPlugin({ name: 'manifest', minChunks: Infinity }),
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+            inject: true,
+        }),
     ]
 };

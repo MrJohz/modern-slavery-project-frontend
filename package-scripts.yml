@@ -1,10 +1,9 @@
 scripts:
   default: 'nps build && concurrently --raw "nps build.watch" "nps dev-server"'
   build:
-    default: 'nps build.bundle && nps build.copy-files'
-    watch: 'concurrently --kill-others-on-fail --names "BUNDL,COPYF" -c "bgBlue.bold,bgGreen.bold"
+    default: 'nps build.bundle'
+    watch: 'concurrently --kill-others-on-fail --names "BUNDL" -c "bgBlue.bold"
       "nps build.bundle.watch"
-      "nps build.copy-files.watch"
     '
 
     # not currently used
@@ -15,9 +14,5 @@ scripts:
     bundle:
       default: 'webpack --config webpack.config.js'
       watch: 'webpack --config webpack.config.js --watch'
-
-    copy-files:
-      default: 'copyfiles -u 1 src/index.html dist/'
-      watch: 'chokidar "src/index.html" -c "nps build.copy-files"'
 
   dev-server: 'http-server ./dist/ -o -c-1 --silent'
