@@ -10,12 +10,13 @@
   },
   "devDependencies": {
     "@types/classnames": "^2.2.0",
-    "@types/react": "^16.0.23",
+    "@types/delay": "^2.0.1",
+    "@types/react": "^16.0.25",
     "@types/react-dom": "^16.0.3",
     "@types/webpack-env": "^1.13.2",
-    "awesome-typescript-loader": "^3.2.1",
+    "awesome-typescript-loader": "^3.4.0",
     "chokidar-cli": "^1.2.0",
-    "concurrently": "^3.5.0",
+    "concurrently": "^3.5.1",
     "copyfiles": "^1.2.0",
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": "^3.0.0",
@@ -23,15 +24,16 @@
     "nps": "^5.6.0",
     "style-loader": "^0.19.0",
     "svg-inline-loader": "^0.8.0",
-    "typescript": "^2.4.1",
-    "webpack": "^3.3.0",
+    "typescript": "^2.6.2",
+    "webpack": "^3.9.0",
     "webpack-combine-loaders": "^2.0.3"
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "delay": "^2.0.0",
     "flag-icon-css": "^2.8.0",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "tslib": "^1.7.1"
   }
 }

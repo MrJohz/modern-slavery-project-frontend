@@ -11,3 +11,7 @@ export function childrenise<T = JSX.Element | string>(children: T | T[]): T[] {
 }
 
 export type ClassName = { className: string };
+
+export type Callback<Name extends string, Params> = { [key in Name]: (params: Params) => void };
+
+export type Optional<Prop> = { [key in keyof Prop]?: Prop[key] };

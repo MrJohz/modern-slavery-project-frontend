@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { App, initModel } from './components/App';
+import { App } from './components/App';
 
 ReactDOM.render(
-    <App model={initModel()}/>,
+    <App/>,
     document.getElementById('example'));
