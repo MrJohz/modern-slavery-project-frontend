@@ -30,6 +30,7 @@
     "webpack-combine-loaders": "^2.0.3"
   },
   "dependencies": {
+    "abortcontroller-polyfill": "^1.0.8",
     "classnames": "^2.2.5",
     "delay": "^2.0.0",
     "flag-icon-css": "^2.8.0",

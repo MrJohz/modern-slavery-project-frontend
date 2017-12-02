@@ -1,5 +1,5 @@
 export const enum StepKind {
-    QUESTION = 'step',
+    QUESTION = 'question',
     ADVICE = 'advice',
 }
 
@@ -17,63 +17,15 @@ export interface ProcedureStepAdvice {
 
 export interface Procedure {
     start: number;
+
     [key: number]: ProcedureStepQuestion | ProcedureStepAdvice;
 }
 
-export async function fetchProcedure(languageId: number): Promise<Procedure> {
-    return {
-        start: 0,
+type FetchOptions = { signal?: AbortSignal };
 
-        0: {
-            kind: StepKind.QUESTION,
-            question: 'Are you free to leave your home?',
-            answers: [{
-                answer: 'Yes',
-                link: 1,
-            }, {
-                answer: 'Sometimes',
-                link: 2,
-            }, {
-                answer: 'Never',
-                link: 3,
-            }],
-        },
+export async function fetchProcedure(languageId: number, opts?: FetchOptions): Promise<Procedure> {
+    const signal = opts && opts.signal;
 
-        1: {
-            kind: StepKind.QUESTION,
-            question: 'Are you a minor (less than 18 years old)?',
-            answers: [{
-                answer: 'Yes',
-                link: 3,
-            }, {
-                answer: 'No',
-                link: 4,
-            }],
-        },
-
-        2: {
-            kind: StepKind.QUESTION,
-            question: 'Could you leave at any time if you wished?',
-            answers: [{
-                answer: 'Yes',
-                link: 4,
-            }, {
-                answer: 'No',
-                link: 3,
-            }],
-        },
-
-        3: {
-            kind: StepKind.ADVICE,
-            forUser: 'Call the police',
-            forFacilitator: 'Make sure the user calls the police',
-        },
-
-        4: {
-            kind: StepKind.ADVICE,
-            forUser: 'Nothing to do',
-            forFacilitator: 'This person is not at risk',
-        },
-
-    };
+    const response = await fetch('http://localhost:3000/procedures/1', { signal });
+    return await response.json();
 }
