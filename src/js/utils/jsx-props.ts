@@ -1,4 +1,4 @@
-export type Children<T = JSX.Element | string> = { children: T | T[] };
+export type Children<T = JSX.Element | string> = Child<T> | ManyChildren<T>;
 export type Child<T = JSX.Element | string> = { children: T };
 export type ManyChildren<T = JSX.Element | string> = { children: T[] };
 
