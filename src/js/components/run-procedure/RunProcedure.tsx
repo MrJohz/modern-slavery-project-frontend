@@ -1,20 +1,20 @@
 import delay from 'delay';
 import React from 'react';
 
-import { Callback } from '../../utils/jsx-props';
 import { Procedure, ProcedureStepAdvice, ProcedureStepQuestion, StepKind } from '../../models/procedure';
-import { Button, SubtleButton } from '../stylish/buttons';
+import { Callback } from '../../utils/jsx-props';
+import { Button } from '../stylish/buttons';
 
 import styles from './RunProcedure.css';
 
-type QuestionPageProps = { question: ProcedureStepQuestion } & Callback<'onAnswer', number>;
+type QuestionPageProps = { question: ProcedureStepQuestion } & Callback<'onAnswer', number | null>;
 
 function QuestionPage({ question, onAnswer }: QuestionPageProps) {
     return <div>
         <div className={styles.question}>{question.question}</div>
         <div className={styles.answerBox}>{
             question.answers.map(answer =>
-                <Button key={answer.link}
+                <Button key={answer.answer}
                         onClick={() => onAnswer(answer.link)}>
                     {answer.answer}
                 </Button>)
@@ -22,54 +22,27 @@ function QuestionPage({ question, onAnswer }: QuestionPageProps) {
     </div>;
 }
 
-type AdvicePageProps = { advice: ProcedureStepAdvice } & Callback<'onFinished', void>;
+type AdvicePageProps = { advice: ProcedureStepAdvice } & Callback<'onFinished', number | null>;
 
-class AdvicePage extends React.Component<AdvicePageProps, { showing: 'facilitator' | 'user' }> {
-    private advice: ProcedureStepAdvice;
-    private onFinishedCallback: (arg: void) => void;
-
-    constructor(props: AdvicePageProps) {
-        super(props);
-        this.advice = props.advice;
-        this.onFinishedCallback = props.onFinished;
-
-        this.state = { showing: 'user' };
+function AdvicePage({ advice, onFinished }: AdvicePageProps) {
+    if (!advice.forUser) {
+        onFinished(advice.link);  // if there is no advice to give, short-circuit and skip this
     }
 
-    setFinished() {
-        this.onFinishedCallback(undefined);
-    }
-
-    setShowing(showing: 'facilitator' | 'user') {
-        this.setState({ showing: showing });
-    }
-
-    render() {
-        switch (this.state.showing) {
-            case 'user':
-                return <div className={styles.advicePage}>
-                    <div className={styles.adviceBox}>{this.advice.forUser}</div>
-                    <SubtleButton onClick={() => this.setShowing('facilitator')}>
-                        Click here to continue
-                    </SubtleButton>
-                </div>;
-            case 'facilitator':
-                return <div className={styles.advicePage}>
-                    <div className={styles.adviceBox}>{this.advice.forFacilitator}</div>
-                    <Button onClick={() => this.setFinished()}>Click here to finish</Button>
-                </div>;
-        }
-    }
+    return <div className={styles.advicePage}>
+        <div className={styles.adviceBox}>{advice.forUser}</div>
+        <Button onClick={() => onFinished(advice.link)}>Continue</Button>
+    </div>;
 }
 
-type RunProcedureProps = { language: number, procedure: Procedure } & Callback<'onFinished', void>;
-type RunProcedureState = { currentStepId: number };
+type RunProcedureProps = { language: number, procedure: Procedure } & Callback<'onFinished', number[]>;
+type RunProcedureState = { steps: number[] };
 
 export class RunProcedure extends React.Component<RunProcedureProps, RunProcedureState> {
 
     private languageId: number;
     private procedure: Procedure;
-    private onFinishedCallback: (arg: void) => void;
+    private onFinishedCallback: (arg: number[]) => void;
 
     constructor(props: RunProcedureProps) {
         super(props);
@@ -79,26 +52,44 @@ export class RunProcedure extends React.Component<RunProcedureProps, RunProcedur
         this.onFinishedCallback = props.onFinished;
 
         this.state = {
-            currentStepId: this.procedure.start,
+            steps: [this.procedure.start],
         };
     }
 
-    async nextStep(id: number) {
+    async nextStep(id: number | null) {
         await delay(350);
-        this.setState((): RunProcedureState => ({ currentStepId: id }));
-    }
 
-    setFinished() {
-        this.onFinishedCallback(undefined);
+        const ids = [id];
+        while (true) {  // don't display advice pages with no user-facing advice
+            const stepId = ids[0];
+            if (stepId == null) {
+                break;
+            }
+
+            const step = this.procedure[stepId];
+            if (step && step.kind === StepKind.ADVICE && !step.forUser) {
+                ids.unshift(step.link);
+            } else {
+                break;
+            }
+        }
+
+        if (ids[0] === null) {
+            this.onFinishedCallback([...ids.slice(1) as number[], ...this.state.steps]);
+        } else {
+            this.setState(({ steps }): RunProcedureState => {
+                return { steps: [...ids as number[], ...steps] };
+            });
+        }
     }
 
     render() {
-        const currentStep = this.procedure[this.state.currentStepId];
+        const currentStep = this.procedure[this.state.steps[0]];
         switch (currentStep.kind) {
             case StepKind.QUESTION:
                 return <QuestionPage question={currentStep} onAnswer={id => this.nextStep(id)}/>;
             case StepKind.ADVICE:
-                return <AdvicePage advice={currentStep} onFinished={() => this.setFinished()}/>;
+                return <AdvicePage advice={currentStep} onFinished={id => this.nextStep(id)}/>;
         }
         return <div>Hello, {this.languageId}</div>;
     }
