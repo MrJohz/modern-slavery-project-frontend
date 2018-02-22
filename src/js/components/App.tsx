@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { fetchLanguages, Language } from '../models/language';
-import { fetchProcedure, Procedure, History } from '../models/procedure';
+import { fetchProcedure, Procedure, History, postResults } from '../models/procedure';
 import { LanguageSelector } from './language-selector/LanguageSelector';
 import { RunProcedure } from './run-procedure/RunProcedure';
 
@@ -52,8 +52,9 @@ export class App extends React.Component<AppProps, AppState> {
         }));
     }
 
-    setFinished(arg: History[]) {
-        console.log(arg);
+    async setFinished(arg: History[]) {
+        await postResults(arg);
+
         this.setState((state: LoadedProps): AppState => ({
             ...state,
             page: AppStateDiscriminator.LANGUAGE_SELECTION,
