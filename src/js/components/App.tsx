@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { fetchLanguages, Language } from '../models/language';
-import { fetchProcedure, Procedure } from '../models/procedure';
+import { fetchProcedure, Procedure, History } from '../models/procedure';
 import { LanguageSelector } from './language-selector/LanguageSelector';
 import { RunProcedure } from './run-procedure/RunProcedure';
 
@@ -52,7 +52,8 @@ export class App extends React.Component<AppProps, AppState> {
         }));
     }
 
-    setFinished() {
+    setFinished(arg: History[]) {
+        console.log(arg);
         this.setState((state: LoadedProps): AppState => ({
             ...state,
             page: AppStateDiscriminator.LANGUAGE_SELECTION,
@@ -79,7 +80,7 @@ export class App extends React.Component<AppProps, AppState> {
             case AppStateDiscriminator.RUN_PROCEDURE:
                 return <RunProcedure language={this.state.language}
                                      procedure={this.state.procedure}
-                                     onFinished={() => this.setFinished()}/>;
+                                     onFinished={(arg) => this.setFinished(arg)}/>;
         }
 
         return <div>Error: We've ended up in invalid state... :(</div>;

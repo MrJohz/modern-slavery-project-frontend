@@ -4,12 +4,14 @@ export const enum StepKind {
 }
 
 export interface ProcedureStepQuestion {
+    id: number;
     kind: StepKind.QUESTION;
     question: string;
-    answers: { answer: string, link: number | null }[];
+    answers: { id: number, answer: string, link: number | null }[];
 }
 
 export interface ProcedureStepAdvice {
+    id: number;
     kind: StepKind.ADVICE;
     link: number | null;
     forUser: string;
@@ -20,6 +22,11 @@ export interface Procedure {
     start: number;
 
     [key: number]: ProcedureStepQuestion | ProcedureStepAdvice;
+}
+
+export interface History {
+    question: number;
+    answer: number;
 }
 
 type FetchOptions = { signal?: AbortSignal };

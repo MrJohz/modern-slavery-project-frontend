@@ -1,13 +1,14 @@
-import delay from 'delay';
 import React from 'react';
 
-import { Procedure, ProcedureStepAdvice, ProcedureStepQuestion, StepKind } from '../../models/procedure';
+import { Procedure, ProcedureStepAdvice, ProcedureStepQuestion, StepKind, History } from '../../models/procedure';
 import { Callback } from '../../utils/jsx-props';
 import { Button } from '../stylish/buttons';
 
 import styles from './RunProcedure.css';
 
-type QuestionPageProps = { question: ProcedureStepQuestion } & Callback<'onAnswer', number | null>;
+type QuestionPageProps
+    = { question: ProcedureStepQuestion }
+    & Callback<'onAnswer', {next: number | null, answerId: number}>;
 
 function QuestionPage({ question, onAnswer }: QuestionPageProps) {
     return <div>
@@ -15,7 +16,7 @@ function QuestionPage({ question, onAnswer }: QuestionPageProps) {
         <div className={styles.answerBox}>{
             question.answers.map(answer =>
                 <Button key={answer.answer}
-                        onClick={() => onAnswer(answer.link)}>
+                        onClick={() => onAnswer({next: answer.link, answerId: answer.id})}>
                     {answer.answer}
                 </Button>)
         }</div>
@@ -35,14 +36,14 @@ function AdvicePage({ advice, onFinished }: AdvicePageProps) {
     </div>;
 }
 
-type RunProcedureProps = { language: number, procedure: Procedure } & Callback<'onFinished', number[]>;
-type RunProcedureState = { steps: number[] };
+type RunProcedureProps = { language: number, procedure: Procedure } & Callback<'onFinished', History[]>;
+type RunProcedureState = { steps: number[], history: History[] };
 
 export class RunProcedure extends React.Component<RunProcedureProps, RunProcedureState> {
 
     private languageId: number;
     private procedure: Procedure;
-    private onFinishedCallback: (arg: number[]) => void;
+    private onFinishedCallback: (arg: History[]) => void;
 
     constructor(props: RunProcedureProps) {
         super(props);
@@ -53,12 +54,26 @@ export class RunProcedure extends React.Component<RunProcedureProps, RunProcedur
 
         this.state = {
             steps: [this.procedure.start],
+            history: [],
         };
     }
 
-    async nextStep(id: number | null) {
-        await delay(350);
+    recordHistory(question: number, answer: number): Promise<void> {
+        let resolve: () => void;
+        const promise = new Promise<void>(r => { resolve = r;});
 
+        this.setState(state => {
+            resolve();
+            return ({
+                ...state,
+                history: [...state.history, { question, answer }],
+            });
+        });
+
+        return promise;
+    }
+
+    async nextStep(id: number | null) {
         const ids = [id];
         while (true) {  // don't display advice pages with no user-facing advice
             const stepId = ids[0];
@@ -75,11 +90,11 @@ export class RunProcedure extends React.Component<RunProcedureProps, RunProcedur
         }
 
         if (ids[0] === null) {
-            this.onFinishedCallback([...ids.slice(1) as number[], ...this.state.steps]);
+            this.onFinishedCallback(this.state.history);
         } else {
-            this.setState(({ steps }): RunProcedureState => {
-                return { steps: [...ids as number[], ...steps] };
-            });
+            this.setState((state): RunProcedureState => ({
+                ...state, steps: [...ids as number[], ...state.steps],
+            }));
         }
     }
 
@@ -87,9 +102,12 @@ export class RunProcedure extends React.Component<RunProcedureProps, RunProcedur
         const currentStep = this.procedure[this.state.steps[0]];
         switch (currentStep.kind) {
             case StepKind.QUESTION:
-                return <QuestionPage question={currentStep} onAnswer={id => this.nextStep(id)}/>;
+                return <QuestionPage question={currentStep} onAnswer={async ({ next, answerId }) => {
+                    await this.recordHistory(currentStep.id, answerId);
+                    await this.nextStep(next);
+                }}/>;
             case StepKind.ADVICE:
-                return <AdvicePage advice={currentStep} onFinished={id => this.nextStep(id)}/>;
+                return <AdvicePage advice={currentStep} onFinished={next => this.nextStep(next)}/>;
         }
         return <div>Hello, {this.languageId}</div>;
     }
