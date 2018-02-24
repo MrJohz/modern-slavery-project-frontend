@@ -1,0 +1,37 @@
+@import "../../../theme/theme.scss";
+
+.button {
+    border: none;
+    background-color: $main;
+    color: $white_text;
+    margin: 0.7em;
+    min-width: 25%;
+    padding: 0.6em 0.8em;
+    text-align: center;
+    font-size: 1.4em;
+
+    position: relative;
+    overflow: hidden;
+
+    composes: shadow from '../../../theme/composing.scss';
+}
+
+.button:disabled {
+    background-color: $main_greyed;
+    color: $black_text;
+    box-shadow: none;
+}
+
+.subtleButton {
+    border: black 0 none;
+    background-color: #efefef;
+    color: #a79dc1;
+    margin: 0.5em;
+    min-width: 25%;
+    padding: 0.25em 0.8em;
+    text-align: center;
+    font-size: 1.4em;
+
+    position: relative;
+    overflow: hidden;
+}

@@ -14,7 +14,7 @@ function LanguageOption({ language, onSelect }: LanguageOptionOpts) {
             {language.flags.map(flagSrc => <Flag key={flagSrc} flagId={flagSrc}/>)}
         </div>
         <div className={styles.welcomeText}>{language.welcomeText}</div>
-        <div className={styles.languageName}>[ {language.languageName} ]</div>
+        <div className={styles.languageName}>[&nbsp;{language.languageName}&nbsp;]</div>
     </div>;
 }
 

@@ -24,15 +24,19 @@ module.exports = {
             { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
             { test: /\.svg$/, loader: 'svg-inline-loader' },
             {
-                test: /\.css$/,
+                test: /\.css|.scss$/,
                 loader: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: combineLoaders([{
                         loader: 'css-loader',
                         query: {
+                            sourceMap: true,
                             modules: true,
-                            localIdentName: '[name]__[local]___[hash:base64:5]'
+                            localIdentName: '[name]__[local]___[hash:base64:5]',
+                            importLoaders: 1,
                         }
+                    }, {
+                        loader: 'sass-loader',
                     }])
                 })
             },

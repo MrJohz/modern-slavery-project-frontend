@@ -1,0 +1,29 @@
+@import "../../../theme/theme.scss";
+
+.introScreen {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.header {
+    z-index: 1;
+    flex: 0 1 auto;
+    text-align: center;
+    background-color: $main;
+    color: $white_text;
+    padding: 0.8em 0;
+    border-bottom: $main_dark 8px solid;
+    font-size: 2em;
+}
+
+.menu {
+    padding-top: 2em;
+    text-align: center;
+    flex: 1 1 auto;
+    background-color: $main_bg;
+}
+
+.button {
+    width: 80%;
+}
