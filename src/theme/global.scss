@@ -30,7 +30,6 @@
     display: block;
   }
   body {
-    font-family: 'Poppins', sans-serif;
     line-height: 1;
     margin: 0;
     padding: 0;
@@ -41,6 +40,9 @@
   }
   #content {
     height: 100%;
+  }
+  body, button, input, textarea, select {
+    font-family: 'Poppins', sans-serif;
   }
   h1 {
     font-family: 'Montserrat', sans-serif;

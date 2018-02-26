@@ -3,6 +3,7 @@ import React from 'react';
 import { fetchLanguages, Language } from '../models/language';
 import { fetchProcedure, Procedure, History, postResults } from '../models/procedure';
 import { Introduction } from './introduction/Introduction';
+import { Outroduction } from './outroduction/Outroduction';
 import { LanguageSelector } from './language-selector/LanguageSelector';
 import { RunProcedure } from './run-procedure/RunProcedure';
 
@@ -13,15 +14,17 @@ const enum AppStateDiscriminator {
     INTRODUCTION,
     LANGUAGE_SELECTION,
     RUN_PROCEDURE,
+    OUTRODUCTION,
 }
 
 type LoadedProps = { languages: Language[] };
 
 export type AppState
-    = { page: AppStateDiscriminator.LOADING}
+    = { page: AppStateDiscriminator.LOADING }
     | ({ page: AppStateDiscriminator.INTRODUCTION } & LoadedProps)
     | ({ page: AppStateDiscriminator.LANGUAGE_SELECTION } & LoadedProps)
     | ({ page: AppStateDiscriminator.RUN_PROCEDURE, language: number, procedure: Procedure } & LoadedProps)
+    | ({ page: AppStateDiscriminator.OUTRODUCTION } & LoadedProps)
     ;
 
 type AppProps = {};
@@ -50,7 +53,7 @@ export class App extends React.Component<AppProps, AppState> {
 
     beginProcedures() {
         this.setState({
-            page: AppStateDiscriminator.LANGUAGE_SELECTION
+            page: AppStateDiscriminator.LANGUAGE_SELECTION,
         });
     }
 
@@ -61,12 +64,16 @@ export class App extends React.Component<AppProps, AppState> {
         }));
     }
 
+    restartApp() {
+        this.setState({ page: AppStateDiscriminator.INTRODUCTION });
+    }
+
     async setFinished(arg: History[]) {
         await postResults(arg);
 
         this.setState((state: LoadedProps): AppState => ({
             ...state,
-            page: AppStateDiscriminator.LANGUAGE_SELECTION,
+            page: AppStateDiscriminator.OUTRODUCTION,
         }));
     }
 
@@ -93,6 +100,8 @@ export class App extends React.Component<AppProps, AppState> {
                 return <RunProcedure language={this.state.language}
                                      procedure={this.state.procedure}
                                      onFinished={(arg) => this.setFinished(arg)}/>;
+            case AppStateDiscriminator.OUTRODUCTION:
+                return <Outroduction onRestart={() => console.log('restarting')}/>;
         }
 
         return <div>Error: We've ended up in invalid state... :(</div>;
