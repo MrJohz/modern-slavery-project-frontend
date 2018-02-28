@@ -3,7 +3,7 @@
 
 interface AbortSignal extends EventTarget {
     readonly aborted: boolean;
-    onabort: () => void;
+    onabort: (ev: Event) => any;
 }
 
 interface AbortSignalConstructor {
@@ -17,6 +17,7 @@ interface AbortController {
 
 interface AbortControllerConstructor {
     new(): AbortController;
+    prototype: AbortController;
 }
 
 interface RequestInit {

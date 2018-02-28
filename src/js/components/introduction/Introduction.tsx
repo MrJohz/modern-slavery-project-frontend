@@ -2,19 +2,12 @@ import React from 'react';
 
 import { Callback } from '../../utils/jsx-props';
 import { Button } from '../stylish/buttons';
+import { LoginScreen } from './LoginScreen';
 
 import styles from './Introduction.scss';
 
 type IntroductionProps = { languagesLoaded: boolean } & Callback<'onBeginQuestions', void>;
 type IntroductionState = { showLogin: boolean };
-
-function LoginScreen() {
-    return <div className={styles.loginScreen}>
-        <label htmlFor="email">Email:</label><input id="email" type="text"/>
-        <label htmlFor="password">Password:</label><input id="password" type="password"/>
-        <Button>Login</Button>
-    </div>;
-}
 
 export class Introduction extends React.Component<IntroductionProps, IntroductionState> {
 
@@ -28,6 +21,10 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
 
     showLoginScreen() {
         this.setState({ showLogin: true });
+    }
+
+    hideLoginScreen() {
+        this.setState({ showLogin: false });
     }
 
     render() {
@@ -46,7 +43,8 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
             </nav>
 
             {this.state.showLogin
-                ? <LoginScreen/>
+                ? <LoginScreen onLogin={u => console.log(u)}
+                               onCancel={() => this.hideLoginScreen()}/>
                 : undefined}
         </div>;
     }

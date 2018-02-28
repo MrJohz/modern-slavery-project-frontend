@@ -1,0 +1,28 @@
+@import "../../../theme/theme.scss";
+
+.loginScreen {
+  composes: shadow from '../../../theme/composing.scss';
+
+  z-index: 3;
+  position: absolute;
+  top: 2.5em;
+  bottom: 9em;
+  left: 2.5em;
+  right: 2.5em;
+
+  padding: 0.5em;
+
+  background-color: $main_bg;
+  color: $black_text;
+}
+
+.loginScreenBorder {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  background-color: transparentize($main_greyed, 0.7);
+}
