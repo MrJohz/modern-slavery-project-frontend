@@ -14,6 +14,7 @@
     overflow: hidden;
 
     composes: shadow from '../../../theme/composing.scss';
+    composes: shadow_motion from '../../../theme/composing.scss';
 }
 
 .button:disabled {

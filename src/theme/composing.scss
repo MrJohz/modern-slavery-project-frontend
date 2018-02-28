@@ -12,6 +12,6 @@
     transition: box-shadow 0.15s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.shadow:active {
+.shadow_motion:active {
     box-shadow: 0 6px 15px -6px darken($alt_1_dark, 15%), 0 0 40px -10px $alt_1_dark;
 }
