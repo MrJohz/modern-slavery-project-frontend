@@ -2,12 +2,13 @@ import React, { ChangeEvent } from 'react';
 
 import { autobind } from 'core-decorators';
 
+import { Session } from '../../models/session';
 import { Callback } from '../../utils/jsx-props';
 import { Button } from '../stylish/buttons';
 
 import styles from './LoginScreen.scss';
 
-type LoginProps = Callback<'onLogin', {}> & Callback<'onCancel', void>;
+type LoginProps = Callback<'onLogin', Session> & Callback<'onCancel', void>;
 type LoginState = {
     email: string, emailErrors: string[],
     password: string, passwordErrors: string[],
@@ -17,8 +18,8 @@ type LoginState = {
 export class LoginScreen extends React.Component<LoginProps, LoginState> {
 
     state = {
-        email: '', emailErrors: [],
-        password: '', passwordErrors: [],
+        emailErrors: [], email: '',
+        passwordErrors: [], password: '',
         loginErrors: [],
     };
 
@@ -79,18 +80,13 @@ export class LoginScreen extends React.Component<LoginProps, LoginState> {
 
         const { email, password } = this.state;
 
-        const response = await fetch(`http://127.0.0.1:3000/sessions`, {
-            method: 'POST',
-            body: JSON.stringify({ email, password }),
-            headers: { 'content-type': 'application/json' },
-        });
+        const maybeSession = await Session.create(email, password);
 
-        const text = await response.json();
-        if (text.statusCode === 400) {
-            this.setState({loginErrors: text.validationErrors});
+        if (Array.isArray(maybeSession)) {
+            this.setState({loginErrors: maybeSession});
         } else {
-            this.setState({loginErrors: []});
-            this.props.onLogin(text);
+            this.setState({ loginErrors: []});
+            this.props.onLogin(maybeSession);
         }
     }
 
