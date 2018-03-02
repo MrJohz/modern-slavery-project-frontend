@@ -7,12 +7,14 @@ import { Button } from '../stylish/buttons';
 import { LoginScreen } from './LoginScreen';
 
 import styles from './Introduction.scss';
+import { OptionsScreen } from './OptionsScreen';
 
-type LoginButtonProps = { maybeSession: Session | null, showLogin: () => void };
+type LoginButtonProps = { maybeSession: Session | null, showLogin: () => void, showOptions: () => void };
 
-function LoginButton({ maybeSession, showLogin }: LoginButtonProps) {
+function LoginButton({ maybeSession, showLogin, showOptions }: LoginButtonProps) {
     if (maybeSession) {
-        return <Button className={styles.menuItem}>Options</Button>;
+        return <Button className={styles.menuItem}
+                       onClick={showOptions}>Options</Button>;
     } else {
         return <Button className={styles.menuItem}
                        onClick={showLogin}>Login</Button>;
@@ -44,38 +46,49 @@ function LoggedInByline({ maybeSession }: LoggedInBylineProps) {
 }
 
 type IntroductionProps = { languagesLoaded: boolean } & Callback<'onBeginQuestions', void>;
-type IntroductionState = { showLogin: boolean, session: Session | null };
+type IntroductionState = { popup: null | 'login' | 'options', session: Session | null };
 
 export class Introduction extends React.Component<IntroductionProps, IntroductionState> {
 
     state: IntroductionState = {
         session: null,
-        showLogin: false,
+        popup: null,
     };
 
-    constructor(props: IntroductionProps) {
-        super(props);
+    componentDidMount() {
+        const rawSession = localStorage.getItem('session');
+        if (rawSession !== null) {
+            const session = Session.fromJSON(rawSession);
+            this.setState({ session });
+        }
     }
 
     @autobind
     showLoginScreen() {
-        this.setState({ showLogin: true });
+        this.setState({ popup: 'login' });
     }
 
     @autobind
-    hideLoginScreen() {
-        this.setState({ showLogin: false });
+    showOptionsScreen() {
+        this.setState({ popup: 'options' });
+    }
+
+    @autobind
+    hidePopup() {
+        this.setState({ popup: null });
     }
 
     @autobind
     onLogin(session: Session) {
-        this.setState({ session, showLogin: false });
+        localStorage.setItem('session', JSON.stringify(session));
+        this.setState({ session, popup: null });
     }
 
     @autobind
     async onLogout() {
         const session = this.state.session;
         await (session && session.clear());
+        localStorage.removeItem('session');
         this.setState({ session: null });
     }
 
@@ -89,7 +102,9 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
                 <Button className={styles.menuItem}
                         onClick={this.props.onBeginQuestions}>Begin Questions</Button>
                 <Button className={styles.menuItem}>Help</Button>
-                <LoginButton maybeSession={this.state.session} showLogin={this.showLoginScreen}/>
+                <LoginButton maybeSession={this.state.session}
+                             showLogin={this.showLoginScreen}
+                             showOptions={this.showOptionsScreen}/>
                 <LogoutButton maybeSession={this.state.session} logout={this.onLogout}/>
             </nav>;
         } else {
@@ -104,9 +119,13 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
             </header>
             {body}
 
-            {this.state.showLogin
+            {this.state.popup === 'login'
                 ? <LoginScreen onLogin={this.onLogin}
-                               onCancel={this.hideLoginScreen}/>
+                               onCancel={this.hidePopup}/>
+                : undefined}
+
+            {this.state.popup === 'options'
+                ? <OptionsScreen user={(this.state.session as Session).user} onClose={this.hidePopup}/>
                 : undefined}
         </div>;
     }

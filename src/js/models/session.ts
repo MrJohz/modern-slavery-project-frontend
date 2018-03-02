@@ -18,6 +18,28 @@ export class User {
     static fromJSON(json: any) {
         return new User(json);
     }
+
+    clone(): User {
+        return new User({
+            id: this.id,
+            name: this.name,
+            email: this.email,
+            site_admin: this.site_admin,
+            administrates: [...this.administrates],
+            memberOf: [...this.memberOf],
+        } as User);
+    }
+
+    async save(): Promise<void> {
+        fetch(`http://127.0.0.1:3000/users/${this.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ name: this.name }),
+        });
+    }
+}
+
+export type JsonLump = {
+    [key: string]: any;
 }
 
 export class Session {
@@ -33,10 +55,14 @@ export class Session {
         this.user = session.user;
     }
 
-    private static fromJSON(json: any): Session {
-        json.expires_at = new Date(json.expires_at);
-        json.user = User.fromJSON(json.user);
-        return new Session(json);
+    static fromJSON(json: JsonLump | string): Session {
+        let parseable = typeof json === 'string'
+            ? JSON.parse(json)
+            : json;
+
+        parseable.expires_at = new Date(parseable.expires_at);
+        parseable.user = User.fromJSON(parseable.user);
+        return new Session(parseable as Session);
     }
 
     static async create(email: string, password: string): Promise<Session | string[]> {
