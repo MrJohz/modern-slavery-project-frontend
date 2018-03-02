@@ -1,7 +1,9 @@
+import { autobind } from 'core-decorators';
 import React from 'react';
 
 import { fetchLanguages, Language } from '../models/language';
 import { fetchProcedure, Procedure, History, postResults } from '../models/procedure';
+import { Session } from '../models/session';
 import { Introduction } from './introduction/Introduction';
 import { Outroduction } from './outroduction/Outroduction';
 import { LanguageSelector } from './language-selector/LanguageSelector';
@@ -20,12 +22,12 @@ const enum AppStateDiscriminator {
 type LoadedProps = { languages: Language[] };
 
 export type AppState
-    = { page: AppStateDiscriminator.LOADING }
+    = ({ page: AppStateDiscriminator.LOADING }
     | ({ page: AppStateDiscriminator.INTRODUCTION } & LoadedProps)
     | ({ page: AppStateDiscriminator.LANGUAGE_SELECTION } & LoadedProps)
     | ({ page: AppStateDiscriminator.RUN_PROCEDURE, language: number, procedure: Procedure } & LoadedProps)
-    | ({ page: AppStateDiscriminator.OUTRODUCTION } & LoadedProps)
-    ;
+    | ({ page: AppStateDiscriminator.OUTRODUCTION } & LoadedProps))
+    & { session: Session | null };
 
 type AppProps = {};
 
@@ -33,11 +35,10 @@ export class App extends React.Component<AppProps, AppState> {
 
     private canceller?: AbortController;
 
-    constructor(props: AppProps) {
-        super(props);
-
-        this.state = { page: AppStateDiscriminator.LOADING };
-    }
+    state: AppState = {
+        page: AppStateDiscriminator.LOADING,
+        session: null,
+    };
 
     async componentDidMount() {
         this.canceller = new AbortController();
@@ -58,33 +59,32 @@ export class App extends React.Component<AppProps, AppState> {
     }
 
     setLoaded(props: LoadedProps) {
-        this.setState((): AppState => ({
-            ...props,
-            page: AppStateDiscriminator.INTRODUCTION,
-        }));
+        this.setState({ page: AppStateDiscriminator.INTRODUCTION, ...props, session: this.state.session });
     }
 
     restartApp() {
         this.setState({ page: AppStateDiscriminator.INTRODUCTION });
     }
 
-    async setFinished(arg: History[]) {
-        await postResults(arg);
+    @autobind
+    setSession(session: Session | null) {
+        this.setState({ session });
+    }
 
-        this.setState((state: LoadedProps): AppState => ({
-            ...state,
-            page: AppStateDiscriminator.OUTRODUCTION,
-        }));
+    async setFinished(language: number, history: History[]) {
+        const sessionId = this.state.session && this.state.session.id;
+        await postResults(language, sessionId, history);
+        this.setState({ page: AppStateDiscriminator.OUTRODUCTION });
     }
 
     async setLanguage(languageId: number) {
         const procedure = await fetchProcedure(languageId);
-        this.setState((state: LoadedProps): AppState => ({
-            ...state,
+        this.setState({
             page: AppStateDiscriminator.RUN_PROCEDURE,
             language: languageId,
             procedure: procedure,
-        }));
+            session: this.state.session,
+        });
     }
 
     render() {
@@ -92,14 +92,16 @@ export class App extends React.Component<AppProps, AppState> {
             case AppStateDiscriminator.LOADING:
             case AppStateDiscriminator.INTRODUCTION:
                 return <Introduction languagesLoaded={'languages' in this.state}
-                                     onBeginQuestions={() => this.beginProcedures()}/>;
+                                     onBeginQuestions={() => this.beginProcedures()}
+                                     onSetSession={this.setSession}/>;
             case AppStateDiscriminator.LANGUAGE_SELECTION:
                 return <LanguageSelector languages={this.state.languages}
                                          onSelect={({ languageId }) => this.setLanguage(languageId)}/>;
             case AppStateDiscriminator.RUN_PROCEDURE:
-                return <RunProcedure language={this.state.language}
-                                     procedure={this.state.procedure}
-                                     onFinished={(arg) => this.setFinished(arg)}/>;
+                const { language, procedure } = this.state;
+                return <RunProcedure language={language}
+                                     procedure={procedure}
+                                     onFinished={(arg) => this.setFinished(language, arg)}/>;
             case AppStateDiscriminator.OUTRODUCTION:
                 return <Outroduction onRestart={() => console.log('restarting')}/>;
         }

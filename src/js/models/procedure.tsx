@@ -38,14 +38,20 @@ export async function fetchProcedure(languageId: number, opts?: FetchOptions): P
     return await response.json();
 }
 
-export async function postResults(results: History[], opts?: FetchOptions) {
+export async function postResults(languageId: number, session: string | null, results: History[], opts?: FetchOptions) {
     const signal = opts && opts.signal;
-    await fetch(`http://localhost:3000/results`, {
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+    });
+
+    if (session != null) {
+        headers.set('session', session);
+    }
+
+    await fetch(`http://127.0.0.1:3000/results`, {
         signal,
         method: 'POST',
-        body: JSON.stringify(results),
-        headers: new Headers({
-            'Content-Type': 'application/json'
-        })
+        body: JSON.stringify({ language: languageId, results }),
+        headers: headers,
     });
 }

@@ -45,7 +45,10 @@ function LoggedInByline({ maybeSession }: LoggedInBylineProps) {
     }
 }
 
-type IntroductionProps = { languagesLoaded: boolean } & Callback<'onBeginQuestions', void>;
+type IntroductionProps =
+    { languagesLoaded: boolean }
+    & Callback<'onBeginQuestions', void>
+    & Callback<'onSetSession', Session | null>;
 type IntroductionState = { popup: null | 'login' | 'options', session: Session | null };
 
 export class Introduction extends React.Component<IntroductionProps, IntroductionState> {
@@ -59,7 +62,7 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
         const rawSession = localStorage.getItem('session');
         if (rawSession !== null) {
             const session = Session.fromJSON(rawSession);
-            this.setState({ session });
+            this.onLogin(session);
         }
     }
 
@@ -81,6 +84,7 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
     @autobind
     onLogin(session: Session) {
         localStorage.setItem('session', JSON.stringify(session));
+        this.props.onSetSession(session);
         this.setState({ session, popup: null });
     }
 
@@ -89,6 +93,7 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
         const session = this.state.session;
         await (session && session.clear());
         localStorage.removeItem('session');
+        this.props.onSetSession(null);
         this.setState({ session: null });
     }
 
