@@ -6,7 +6,8 @@
   "author": "Jonathan Frere",
   "license": "MIT",
   "scripts": {
-    "develop": "nps default"
+    "develop": "nps default",
+    "release": "nps release"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.0",

@@ -1,5 +1,8 @@
 scripts:
   default: 'nps build && concurrently --raw "nps build.watch" "nps dev-server"'
+
+  release: 'nps build'
+
   build:
     default: 'nps build.bundle'
     watch: 'concurrently --kill-others-on-fail --names "BUNDL" -c "bgBlue.bold"
