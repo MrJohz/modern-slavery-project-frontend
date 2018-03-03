@@ -1,3 +1,5 @@
+import { ROOT_URL } from '../utils/constants';
+
 export class User {
     id: number;
     name: string;
@@ -31,7 +33,7 @@ export class User {
     }
 
     async save(): Promise<void> {
-        fetch(`http://127.0.0.1:3000/users/${this.id}`, {
+        fetch(`${ROOT_URL}/users/${this.id}`, {
             method: 'PATCH',
             body: JSON.stringify({ name: this.name }),
         });
@@ -66,7 +68,7 @@ export class Session {
     }
 
     static async create(email: string, password: string): Promise<Session | string[]> {
-        const response = await fetch(`http://127.0.0.1:3000/sessions`, {
+        const response = await fetch(`${ROOT_URL}/sessions`, {
             method: 'POST',
             body: JSON.stringify({ email, password }),
             headers: { 'content-type': 'application/json' },
@@ -78,7 +80,7 @@ export class Session {
     }
 
     async clear() {
-        const response = await fetch(`http://127.0.0.1:3000/sessions/${this.id}`, {
+        const response = await fetch(`${ROOT_URL}/sessions/${this.id}`, {
             method: 'DELETE',
             headers: { 'content-type': 'application/json' },
         });

@@ -1,3 +1,5 @@
+import { ROOT_URL } from '../utils/constants';
+
 export const enum StepKind {
     QUESTION = 'question',
     ADVICE = 'advice',
@@ -34,7 +36,7 @@ type FetchOptions = { signal?: AbortSignal };
 export async function fetchProcedure(languageId: number, opts?: FetchOptions): Promise<Procedure> {
     const signal = opts && opts.signal;
 
-    const response = await fetch(`http://localhost:3000/procedures/1?language=${languageId}`, { signal });
+    const response = await fetch(`${ROOT_URL}/procedures/1?language=${languageId}`, { signal });
     return await response.json();
 }
 
@@ -48,7 +50,7 @@ export async function postResults(languageId: number, session: string | null, re
         headers.set('session', session);
     }
 
-    await fetch(`http://127.0.0.1:3000/results`, {
+    await fetch(`${ROOT_URL}/results`, {
         signal,
         method: 'POST',
         body: JSON.stringify({ language: languageId, results }),
