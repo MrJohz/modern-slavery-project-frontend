@@ -51,9 +51,8 @@ export async function postResults(languageId: number, session: string | null, re
     }
 
     await fetch(`${ROOT_URL}/results`, {
-        signal,
+        signal, headers,
         method: 'POST',
         body: JSON.stringify({ language: languageId, results }),
-        headers: headers,
     });
 }

@@ -4,7 +4,7 @@ import { Procedure, ProcedureStepAdvice, ProcedureStepQuestion, StepKind, Histor
 import { Callback } from '../../utils/jsx-props';
 import { Button } from '../stylish/buttons';
 
-import styles from './RunProcedure.css';
+import styles from './RunProcedure.scss';
 
 type QuestionPageProps
     = { question: ProcedureStepQuestion }
@@ -32,6 +32,7 @@ function AdvicePage({ advice, onFinished }: AdvicePageProps) {
 
     return <div className={styles.advicePage}>
         <div className={styles.adviceBox}>{advice.forUser}</div>
+        <div className={styles.englishAdviceBox}>{advice.forFacilitator}</div>
         <Button onClick={() => onFinished(advice.link)}>Continue</Button>
     </div>;
 }
