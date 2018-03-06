@@ -62,6 +62,7 @@ export class App extends React.Component<AppProps, AppState> {
         this.setState({ page: AppStateDiscriminator.INTRODUCTION, ...props, session: this.state.session });
     }
 
+    @autobind
     restartApp() {
         this.setState({ page: AppStateDiscriminator.INTRODUCTION });
     }
@@ -103,7 +104,7 @@ export class App extends React.Component<AppProps, AppState> {
                                      procedure={procedure}
                                      onFinished={(arg) => this.setFinished(language, arg)}/>;
             case AppStateDiscriminator.OUTRODUCTION:
-                return <Outroduction onRestart={() => console.log('restarting')}/>;
+                return <Outroduction onRestart={this.restartApp}/>;
         }
 
         return <div>Error: We've ended up in invalid state... :(</div>;

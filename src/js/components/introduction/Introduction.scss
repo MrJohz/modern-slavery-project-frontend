@@ -24,3 +24,9 @@
     margin: 0.7em auto;
     width: 80%;
 }
+
+.loggedInByLine {
+    composes: menuItem;
+
+    width: 65%;
+}

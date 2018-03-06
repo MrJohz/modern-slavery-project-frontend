@@ -1,8 +1,22 @@
 .outroScreen {
-  composes: background from "../../../theme/composing.scss";
+    composes: background from "../../../theme/composing.scss";
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
 }
 
 .button {
-  width: 80%;
-  margin: 0 auto;
+    width: 80%;
+    margin: auto auto 1.5em;
+}
+
+.thankYouText {
+    padding: 1.5em 1.5em 0;
+    margin-bottom: auto;
+}
+
+.tickImage {
+    width: calc(100% - 4em);
+    padding: 2em;
+    margin: auto 0
 }

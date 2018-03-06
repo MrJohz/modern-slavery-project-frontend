@@ -8,6 +8,7 @@ import { LoginScreen } from './LoginScreen';
 
 import styles from './Introduction.scss';
 import { OptionsScreen } from './OptionsScreen';
+import classNames from 'classnames';
 
 type LoginButtonProps = { maybeSession: Session | null, showLogin: () => void, showOptions: () => void };
 
@@ -35,11 +36,11 @@ type LoggedInBylineProps = { maybeSession: Session | null };
 
 function LoggedInByline({ maybeSession }: LoggedInBylineProps) {
     if (maybeSession) {
-        return <p className={styles.menuItem}>
+        return <p className={styles.loggedInByLine}>
             You are currently logged in as&nbsp;{maybeSession.user.name}.
         </p>;
     } else {
-        return <p className={styles.menuItem}>
+        return <p className={styles.loggedInByLine}>
             You are not currently logged in. Your responses will be submitted&nbsp;anonymously.
         </p>;
     }

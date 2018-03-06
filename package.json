@@ -37,7 +37,7 @@
     "classnames": "^2.2.5",
     "core-decorators": "^0.20.0",
     "delay": "^2.0.0",
-    "flag-icon-css": "^3.0.0",
+    "flag-icon-css": "^2.9.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "tslib": "^1.7.1"
