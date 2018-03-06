@@ -1,0 +1,63 @@
+@import "../../../theme/theme.scss";
+
+.loginScreen {
+    composes: shadow from '../../../theme/composing.scss';
+
+    z-index: 3;
+    position: absolute;
+    top: 1.8em;
+    bottom: 1.8em;
+    left: 1.8em;
+    right: 1.8em;
+
+    padding: 0.7em;
+    overflow-y: scroll;
+
+    background-color: $main_bg;
+    color: $black_text;
+}
+
+.loginScreen h1 {
+    font-size: 1.8em;
+    padding: 0.8em 1.4em 0.3em;
+}
+
+.loginScreen h2 {
+    padding: 0.7em 1.4em 0.3em;
+    font-size: 1.3em;
+}
+
+.loginScreen p {
+    padding: 0.5em;
+    text-align: justify;
+}
+
+.loginScreenBorder {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    background-color: transparentize($main_greyed, 0.7);
+}
+
+.closeButton {
+    position: absolute;
+    z-index: 5;
+    top: 2.3em;
+    right: 2.3em;
+    margin: 0;
+    min-width: 0;
+    height: 2em;
+    width: 2em;
+    text-align: center;
+    padding: 0.2em;
+}
+
+.miniButton {
+    font-size: 1em;
+    padding: 0.2em 0.6em;
+    min-width: 0;
+}

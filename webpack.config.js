@@ -4,8 +4,6 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const combineLoaders = require('webpack-combine-loaders');
 
-process.traceDeprecation = true;
-
 module.exports = {
     entry: {
         app: './src/js/index.tsx',
@@ -26,7 +24,7 @@ module.exports = {
             { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
             {
                 test: /\.svg$/, loader: 'svg-inline-loader',
-                query: { removeSVGTagAttrs: false },
+                options: { removeSVGTagAttrs: false },
             },
             {
                 test: /\.css|.scss$/,
@@ -45,6 +43,13 @@ module.exports = {
                     }])
                 })
             },
+            {
+                test: /\.md$/,
+                use: [
+                    { loader: 'html-loader' },
+                    { loader: 'markdown-loader' },
+                ]
+            }
 
         ]
     },

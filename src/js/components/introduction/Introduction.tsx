@@ -4,11 +4,11 @@ import { Session } from '../../models/session';
 
 import { Callback } from '../../utils/jsx-props';
 import { Button } from '../stylish/buttons';
+import { HelpScreen } from './HelpScreen';
 import { LoginScreen } from './LoginScreen';
 
 import styles from './Introduction.scss';
 import { OptionsScreen } from './OptionsScreen';
-import classNames from 'classnames';
 
 type LoginButtonProps = { maybeSession: Session | null, showLogin: () => void, showOptions: () => void };
 
@@ -50,7 +50,7 @@ type IntroductionProps =
     { languagesLoaded: boolean }
     & Callback<'onBeginQuestions', void>
     & Callback<'onSetSession', Session | null>;
-type IntroductionState = { popup: null | 'login' | 'options', session: Session | null };
+type IntroductionState = { popup: null | 'login' | 'options' | 'help', session: Session | null };
 
 export class Introduction extends React.Component<IntroductionProps, IntroductionState> {
 
@@ -75,6 +75,11 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
     @autobind
     showOptionsScreen() {
         this.setState({ popup: 'options' });
+    }
+
+    @autobind
+    showHelpScreen() {
+        this.setState({ popup: 'help' });
     }
 
     @autobind
@@ -107,7 +112,8 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
                 <LoggedInByline maybeSession={session}/>
                 <Button className={styles.menuItem}
                         onClick={this.props.onBeginQuestions}>Begin Questions</Button>
-                <Button className={styles.menuItem}>Help</Button>
+                <Button className={styles.menuItem}
+                        onClick={this.showHelpScreen}>Help</Button>
                 <LoginButton maybeSession={this.state.session}
                              showLogin={this.showLoginScreen}
                              showOptions={this.showOptionsScreen}/>
@@ -132,6 +138,10 @@ export class Introduction extends React.Component<IntroductionProps, Introductio
 
             {this.state.popup === 'options'
                 ? <OptionsScreen user={(this.state.session as Session).user} onClose={this.hidePopup}/>
+                : undefined}
+
+            {this.state.popup === 'help'
+                ? <HelpScreen onClose={this.hidePopup}/>
                 : undefined}
         </div>;
     }
